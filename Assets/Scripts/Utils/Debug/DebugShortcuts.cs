@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
 using Zenject;
 
@@ -8,14 +9,14 @@ public class DebugShortcuts : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.R))
+        if (Keyboard.current.rKey.wasPressedThisFrame)
         {
-            if (Input.GetKey(KeyCode.LeftShift))
+            if (Keyboard.current.shiftKey.isPressed)
                 PersistentDataManager.Reset();
 
             SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
         }
-        else if (Input.GetKeyDown(KeyCode.M))
+        else if (Keyboard.current.mKey.wasPressedThisFrame)
         {
             _persistentDataManager.Save();
         }

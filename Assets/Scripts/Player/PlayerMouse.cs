@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 public class PlayerMouse : MonoBehaviour
 {
     [SerializeField] PlayerController _playerController;
-    [SerializeField] SpriteRenderer _stackMarker;
-
     [SerializeField] float _interactRange = 2;
+
+    [Inject] Player _player;
 
     Camera _mainCamera;
 
@@ -29,29 +30,22 @@ public class PlayerMouse : MonoBehaviour
         _playerController.onRightClick -= HandleRightClick;
     }
 
-    void Update()
-    {
-        _stackMarker.transform.position = RoundedMousePosition();
-    }
-
     void HandleLeftClick()
     {
         if (IsMouseOffScreen()) return;
 
-        var mousePosition = RoundedMousePosition();
+        var mousePosition = MousePosition();
 
         var size = Physics2D.OverlapPointNonAlloc(mousePosition, _results);
         for (var i = 0; i < size; ++i)
         {
-            var interactable = _results[i].GetComponent<Interactable>();
-            if (!interactable) continue;
-
-            var col = interactable.GetComponent<Collider2D>();
+            var col = _results[i];
             var closestPoint = col.ClosestPoint(transform.position);
             if (Vector2.Distance(transform.position, closestPoint) > _interactRange)
                 continue;
 
-            interactable.Interact();
+            var interactable = col.GetComponent<IInteractable>();
+            interactable?.Interact(_player);
             return;
         }
     }
@@ -66,10 +60,8 @@ public class PlayerMouse : MonoBehaviour
         return position.x is < 0 or > 1 || position.y is < 0 or > 1;
     }
 
-    Vector2 RoundedMousePosition()
+    Vector2 MousePosition()
     {
-        return Vector2Int.RoundToInt(
-            _mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue())
-        );
+        return _mainCamera.ScreenToWorldPoint(Mouse.current.position.ReadValue());
     }
 }

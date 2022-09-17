@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-public abstract class Interactable : MonoBehaviour
+﻿public interface IInteractable
 {
-    public abstract void Interact();
+    public void Interact(Player player);
 }

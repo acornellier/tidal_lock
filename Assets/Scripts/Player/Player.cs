@@ -1,7 +1,7 @@
 ﻿using System;
 using Animancer;
+using FarrokhGames.Inventory;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(AnimancerComponent))]
 [RequireComponent(typeof(Collider2D))]
@@ -14,6 +14,8 @@ public class Player : MonoBehaviour, IPersistableData
     [SerializeField] PlayerController _controller;
     [SerializeField] Animations _animations;
 
+    public InventoryManager inventory { get; private set; }
+
     AnimancerComponent _animancer;
     Rigidbody2D _body;
 
@@ -23,6 +25,9 @@ public class Player : MonoBehaviour, IPersistableData
     {
         _animancer = GetComponent<AnimancerComponent>();
         _body = GetComponent<Rigidbody2D>();
+
+        var provider = new InventoryProvider();
+        inventory = new InventoryManager(provider, 4, 4);
     }
 
     void FixedUpdate()
@@ -54,6 +59,11 @@ public class Player : MonoBehaviour, IPersistableData
         _audio.Footstep();
     }
 
+    public void Collect(Collectible collectible)
+    {
+        inventory.TryAdd(collectible.itemObject.CreateInstance());
+    }
+
     void UpdateMovement()
     {
         var moveInput = _controller.actions.Move.ReadValue<Vector2>();
@@ -81,9 +91,7 @@ public class Player : MonoBehaviour, IPersistableData
 
         if ((_facingDirection.x < 0 && transform.localScale.x > 0) ||
             (_facingDirection.x > 0 && transform.localScale.x < 0))
-        {
             transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
-        }
     }
 
     void UpdateAnimations()
