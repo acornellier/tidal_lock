@@ -203,8 +203,9 @@ namespace FarrokhGames.Inventory
             }
 
             // Check if item overlaps another item already in the inventory
-            if (!allItems.Any(otherItem => item.Overlaps(otherItem)))
+            if (!allItems.Any(item.Overlaps))
                 return true; // Item can be added
+
             item.position = previousPoint;
             return false;
         }
@@ -228,32 +229,31 @@ namespace FarrokhGames.Inventory
         /// <inheritdoc />
         public bool CanAdd(IInventoryItem item)
         {
-            Vector2Int point;
-            if (!Contains(item) && GetFirstPointThatFitsItem(item, out point))
-                return CanAddAt(item, point);
-            return false;
+            return !Contains(item) &&
+                   GetFirstPointThatFitsItem(item, out var point) &&
+                   CanAddAt(item, point);
         }
 
         /// <inheritdoc />
         public bool TryAdd(IInventoryItem item)
         {
-            if (!CanAdd(item)) return false;
-            Vector2Int point;
-            return GetFirstPointThatFitsItem(item, out point) && TryAddAt(item, point);
+            return CanAdd(item) &&
+                   GetFirstPointThatFitsItem(item, out var point) &&
+                   TryAddAt(item, point);
         }
 
         /// <inheritdoc />
         public bool CanSwap(IInventoryItem item)
         {
-            return DoesItemFit(item) &&
-                   _provider.CanAddInventoryItem(item);
+            // TODO
+            return false;
+            // return DoesItemFit(item) && _provider.CanAddInventoryItem(item);
         }
 
         /// <inheritdoc />
         public void DropAll()
         {
-            var itemsToDrop = allItems.ToArray();
-            foreach (var item in itemsToDrop)
+            foreach (var item in allItems)
             {
                 TryDrop(item);
             }

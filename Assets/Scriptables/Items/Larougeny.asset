@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b6e475e2d6a041cb9e4d114a06053564, type: 3}
   m_Name: Larougeny
   m_EditorClassIdentifier: 
-  _sprite: {fileID: 21300000, guid: 2d3c315b6d3db6b4284e87f4c7bd41c1, type: 3}
+  _sprite: {fileID: 21300000, guid: 8b453d3c306420e49af70fb5550133a0, type: 3}
   _shape:
     _width: 1
     _height: 1

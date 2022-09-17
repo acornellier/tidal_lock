@@ -145,6 +145,8 @@ namespace FarrokhGames.Inventory
                     onItemDropped?.Invoke(_itemToDrag);
                     ClearHoveredItem();
                     break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
 
             _draggedItem = null;
@@ -177,6 +179,7 @@ namespace FarrokhGames.Inventory
             if (_draggedItem != null)
                 // Change which controller is in control of the dragged item
                 _draggedItem.currentController = this;
+
             _currentEventData = eventData;
         }
 
@@ -219,19 +222,16 @@ namespace FarrokhGames.Inventory
         internal Vector2Int ScreenToGrid(Vector2 screenPoint)
         {
             var pos = ScreenToLocalPositionInRenderer(screenPoint);
-            var sizeDelta = inventoryRenderer.rectTransform.sizeDelta;
-            pos.x += sizeDelta.x / 2;
-            pos.y += sizeDelta.y / 2;
             return new Vector2Int(
                 Mathf.FloorToInt(pos.x / inventoryRenderer.cellSize.x),
-                Mathf.FloorToInt(pos.y / inventoryRenderer.cellSize.y)
+                Mathf.FloorToInt(-pos.y / inventoryRenderer.cellSize.y)
             );
         }
 
         Vector2 ScreenToLocalPositionInRenderer(Vector2 screenPosition)
         {
             RectTransformUtility.ScreenPointToLocalPointInRectangle(
-                inventoryRenderer.rectTransform,
+                inventoryRenderer.imageContainer,
                 screenPosition,
                 _canvas.renderMode == RenderMode.ScreenSpaceOverlay ? null : _canvas.worldCamera,
                 out var localPosition

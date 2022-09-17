@@ -42,9 +42,12 @@ namespace FarrokhGames.Inventory
             rectTransform = GetComponent<RectTransform>();
 
             // Create the image container
-            var imageContainer = new GameObject("Image Pool").AddComponent<RectTransform>();
+            imageContainer = new GameObject("Image Pool").AddComponent<RectTransform>();
             imageContainer.transform.SetParent(transform);
-            imageContainer.transform.localPosition = Vector3.zero;
+            imageContainer.anchorMin = new Vector2(0, 1);
+            imageContainer.anchorMax = new Vector2(0, 1);
+            imageContainer.pivot = new Vector2(0, 1);
+            imageContainer.anchoredPosition = Vector3.zero;
             imageContainer.transform.localScale = Vector3.one;
 
             // Create pool of images
@@ -54,6 +57,9 @@ namespace FarrokhGames.Inventory
                     var image = new GameObject("Image").AddComponent<Image>();
                     image.transform.SetParent(imageContainer);
                     image.transform.localScale = Vector3.one;
+                    image.rectTransform.anchorMin = new Vector2(0, 1);
+                    image.rectTransform.anchorMax = new Vector2(0, 1);
+                    image.rectTransform.pivot = new Vector2(0, 1);
                     return image;
                 }
             );
@@ -74,6 +80,11 @@ namespace FarrokhGames.Inventory
         /// Returns the RectTransform for this renderer
         /// </summary>
         public RectTransform rectTransform { get; private set; }
+
+        /// <summary>
+        /// Returns the RectTransform for this renderer
+        /// </summary>
+        public RectTransform imageContainer { get; private set; }
 
         /// <summary>
         /// Returns the size of this inventory's cells
@@ -143,8 +154,6 @@ namespace FarrokhGames.Inventory
                 cellSize.x * inventory.width,
                 cellSize.y * inventory.height
             );
-            var topLeft = new Vector3(-containerSize.x / 2, containerSize.y / 2, 0);
-            var halfCellSize = new Vector3(cellSize.x / 2, cellSize.y / 2, 0);
             _grids = new Image[inventory.width * inventory.height];
             var c = 0;
             for (var y = 0; y < inventory.height; y++)
@@ -153,14 +162,9 @@ namespace FarrokhGames.Inventory
                 {
                     var grid = CreateImage(_cellSpriteEmpty, true);
                     grid.gameObject.name = "Grid " + c;
-                    grid.rectTransform.SetAsFirstSibling();
                     grid.type = Image.Type.Sliced;
-                    grid.rectTransform.localPosition = topLeft + new Vector3(
-                        cellSize.x * (inventory.width - 1 - x),
-                        -cellSize.y * y,
-                        0
-                    ) + halfCellSize;
-                    grid.rectTransform.sizeDelta = cellSize;
+                    grid.rectTransform.localPosition =
+                        new Vector3(cellSize.x * x, -cellSize.y * y, 0);
                     _grids[c] = grid;
                     c++;
                 }
@@ -234,10 +238,7 @@ namespace FarrokhGames.Inventory
             var img = _imagePool.Take();
             img.gameObject.SetActive(true);
             img.sprite = sprite;
-            img.rectTransform.sizeDelta = new Vector2(
-                img.sprite.rect.width,
-                img.sprite.rect.height
-            );
+            img.rectTransform.sizeDelta = cellSize;
             img.transform.SetAsLastSibling();
             img.type = Image.Type.Simple;
             img.raycastTarget = raycastTarget;
@@ -264,24 +265,23 @@ namespace FarrokhGames.Inventory
         {
             if (item == null)
                 return;
+
             ClearSelection();
 
             for (var x = 0; x < item.width; x++)
             {
                 for (var y = 0; y < item.height; y++)
                 {
-                    if (item.IsPartOfShape(new Vector2Int(x, y)))
-                    {
-                        var p = item.position + new Vector2Int(x, y);
-                        if (p.x >= 0 && p.x < inventory.width && p.y >= 0 &&
-                            p.y < inventory.height)
-                        {
-                            var index = p.y * inventory.width + (inventory.width - 1 - p.x);
-                            _grids[index].sprite =
-                                blocked ? _cellSpriteBlocked : _cellSpriteSelected;
-                            _grids[index].color = color;
-                        }
-                    }
+                    if (!item.IsPartOfShape(new Vector2Int(x, y)))
+                        continue;
+
+                    var p = item.position + new Vector2Int(x, y);
+                    if (p.x < 0 || p.x >= inventory.width || p.y < 0 || p.y >= inventory.height)
+                        continue;
+
+                    var index = p.y * inventory.height + p.x;
+                    _grids[index].sprite = blocked ? _cellSpriteBlocked : _cellSpriteSelected;
+                    _grids[index].color = color;
                 }
             }
         }
@@ -291,10 +291,10 @@ namespace FarrokhGames.Inventory
         /// </summary>
         public void ClearSelection()
         {
-            for (var i = 0; i < _grids.Length; i++)
+            foreach (var t in _grids)
             {
-                _grids[i].sprite = _cellSpriteEmpty;
-                _grids[i].color = Color.white;
+                t.sprite = _cellSpriteEmpty;
+                t.color = Color.white;
             }
         }
 
@@ -303,9 +303,8 @@ namespace FarrokhGames.Inventory
         */
         internal Vector2 GetItemOffset(IInventoryItem item)
         {
-            var x = (-(inventory.width * 0.5f) + item.position.x + item.width * 0.5f) * cellSize.x;
-            var y = (-(inventory.height * 0.5f) + item.position.y + item.height * 0.5f) *
-                    cellSize.y;
+            var x = item.position.x * cellSize.x;
+            var y = -item.position.y * cellSize.y;
             return new Vector2(x, y);
         }
     }

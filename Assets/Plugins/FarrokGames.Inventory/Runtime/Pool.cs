@@ -7,16 +7,16 @@ namespace FarrokhGames.Shared
     /// <summary>
     /// A generic pool of objects that can be retrieved and recycled without invoking additional allocations.
     /// 
-	/// Please note that care must be taken when pooling objects, since the object
-	/// has to be manually reset after retrieval from the pool. Its constructor will
-	/// not be run again after the first time!
+    /// Please note that care must be taken when pooling objects, since the object
+    /// has to be manually reset after retrieval from the pool. Its constructor will
+    /// not be run again after the first time!
     /// </summary>
     public sealed class Pool<T> where T : class
     {
-        private List<T> _inactive = new List<T>();
-        private List<T> _active = new List<T>();
-        private Func<T> _creator;
-        private bool _allowTakingWhenEmpty;
+        readonly List<T> _inactive = new();
+        readonly List<T> _active = new();
+        readonly Func<T> _creator;
+        readonly bool _allowTakingWhenEmpty;
 
         /// <summary>
         /// Constructor
@@ -26,10 +26,13 @@ namespace FarrokhGames.Shared
         /// <param name="allowTakingWhenEmpty">If true, objects can be taken from the pool even when the pool is empty</param>
         public Pool(Func<T> creator, int initialCount = 0, bool allowTakingWhenEmpty = true)
         {
-            if (creator == null) throw new ArgumentNullException("pCreator");
-            if (initialCount < 0) throw new ArgumentOutOfRangeException("pInitialCount", "Initial count cannot be negative");
+            if (initialCount < 0)
+                throw new ArgumentOutOfRangeException(
+                    nameof(initialCount),
+                    "Initial count cannot be negative"
+                );
 
-            _creator = creator;
+            _creator = creator ?? throw new ArgumentNullException(nameof(creator));
             _inactive.Capacity = initialCount;
             _allowTakingWhenEmpty = allowTakingWhenEmpty;
 
@@ -47,8 +50,9 @@ namespace FarrokhGames.Shared
 
         /// <summary>
         /// Returns true if the pool is empty.
-		/// Note that objects can still be taken from an empty pool, if allowTakingWhenEmpty 
+        /// Note that objects can still be taken from an empty pool, if allowTakingWhenEmpty 
         /// is set to true, but that additional allocations will be imposed.
+        /// </summary>
         public bool IsEmpty => Count == 0;
 
         /// <summary>
@@ -66,41 +70,36 @@ namespace FarrokhGames.Shared
         /// <returns>An object of type T, or null if nothing could be taken</returns>
         public T Take()
         {
-            if (IsEmpty)
-            {
-                if (_allowTakingWhenEmpty)
-                {
-                    var obj = _creator();
-                    _inactive.Add(obj);
-                    return TakeInternal();
-                }
-                else
-                {
-                    return null;
-                }
-            }
-            else
-            {
+            if (!IsEmpty)
                 return TakeInternal();
-            }
+
+            if (!_allowTakingWhenEmpty)
+                return null;
+
+            var obj = _creator();
+            _inactive.Add(obj);
+            return TakeInternal();
         }
 
-        private T TakeInternal()
+        T TakeInternal()
         {
-            T obj = _inactive[_inactive.Count - 1];
+            var obj = _inactive[^1];
             _inactive.RemoveAt(_inactive.Count - 1);
             _active.Add(obj);
             return obj;
         }
 
         /// <summary>
-		/// Recycles an object into the pool. After this point, the object is
-		/// considered dead and should not be used until taken from the pool
-		/// again.
+        /// Recycles an object into the pool. After this point, the object is
+        /// considered dead and should not be used until taken from the pool
+        /// again.
         /// </summary>
         public void Recycle(T item)
         {
-            if (!_active.Contains(item)) { throw new InvalidOperationException("An item was recycled even though it was not part of the pool"); }
+            if (!_active.Contains(item))
+                throw new InvalidOperationException(
+                    "An item was recycled even though it was not part of the pool"
+                );
             _inactive.Add(item);
             _active.Remove(item);
         }
