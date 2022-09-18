@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
@@ -9,6 +10,7 @@ public class PlayerController : MonoBehaviour
     public Action onBag;
 
     InputActions.PlayerActions _actions;
+    bool _pointerOverUi;
 
     void Awake()
     {
@@ -28,6 +30,11 @@ public class PlayerController : MonoBehaviour
         DisableControls();
     }
 
+    void Update()
+    {
+        _pointerOverUi = EventSystem.current.IsPointerOverGameObject();
+    }
+
     public Vector2 MoveValue()
     {
         return _actions.Move.ReadValue<Vector2>();
@@ -43,17 +50,21 @@ public class PlayerController : MonoBehaviour
         _actions.Disable();
     }
 
-    void HandleLeftClick(InputAction.CallbackContext obj)
+    void HandleLeftClick(InputAction.CallbackContext ctx)
     {
+        if (_pointerOverUi) return;
+
         onLeftClick?.Invoke();
     }
 
-    void HandleRightClick(InputAction.CallbackContext obj)
+    void HandleRightClick(InputAction.CallbackContext ctx)
     {
+        if (_pointerOverUi) return;
+
         onRightClick?.Invoke();
     }
 
-    void HandleBag(InputAction.CallbackContext obj)
+    void HandleBag(InputAction.CallbackContext ctx)
     {
         onBag?.Invoke();
     }

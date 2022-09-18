@@ -1,4 +1,5 @@
-﻿using FarrokhGames.Inventory;
+﻿using System.Collections.Generic;
+using FarrokhGames.Inventory;
 using UnityEngine;
 
 [CreateAssetMenu(fileName = "ItemObject", menuName = "Inventory/ItemObject", order = 0)]
@@ -6,6 +7,7 @@ public class ItemObject : ScriptableObject, IInventoryItem
 {
     [SerializeField] Sprite _sprite;
     [SerializeField] InventoryShape _shape;
+    [SerializeField] List<ItemObject> _craftingIngredients;
 
     public Sprite sprite => _sprite;
 
@@ -16,6 +18,8 @@ public class ItemObject : ScriptableObject, IInventoryItem
     public int height => _shape.height;
 
     public bool canDrop => true;
+
+    public List<ItemObject> craftingIngredients => _craftingIngredients;
 
     public bool IsPartOfShape(Vector2Int localPosition)
     {
