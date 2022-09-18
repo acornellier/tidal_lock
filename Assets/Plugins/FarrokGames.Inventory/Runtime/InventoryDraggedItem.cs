@@ -108,7 +108,7 @@ namespace FarrokhGames.Inventory
                         )
                     );
                     var canAdd = currentController.inventory.CanAddAt(_item, _item.position) ||
-                                 CanSwap();
+                                 CanSwapAt(_item.position);
                     currentController.inventoryRenderer.SelectItem(_item, !canAdd, Color.white);
                 }
 
@@ -137,7 +137,7 @@ namespace FarrokhGames.Inventory
                     mode = DropMode.Added;
                 }
                 // Adding did not work, try to swap
-                else if (CanSwap())
+                else if (CanSwapAt(grid))
                 {
                     var otherItem = currentController.inventory.allItems[0];
                     currentController.inventory.TryRemove(otherItem);
@@ -186,11 +186,14 @@ namespace FarrokhGames.Inventory
         /* 
          * Returns true if its possible to swap
          */
-        bool CanSwap()
+        bool CanSwapAt(Vector2Int point)
         {
-            if (!currentController.inventory.CanSwap(_item)) return false;
-            var otherItem = currentController.inventory.allItems[0];
-            return _originalController.inventory.CanAdd(otherItem) &&
+            if (!currentController.inventory.CanSwapAt(_item, point)) return false;
+
+            var otherItem = currentController.inventory.GetAtPoint(point);
+            if (otherItem == null) return false;
+
+            return _originalController.inventory.CanAddAt(otherItem, _originPoint) &&
                    currentController.inventory.CanRemove(otherItem);
         }
     }

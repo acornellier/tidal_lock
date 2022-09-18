@@ -29,7 +29,7 @@ namespace FarrokhGames.Inventory
         /// of this items shape
         /// </summary>
         bool IsPartOfShape(Vector2Int localPosition);
-        
+
         /// <summary>
         /// Returns true if this item can be dropped on the ground
         /// </summary>
@@ -66,9 +66,11 @@ namespace FarrokhGames.Inventory
                 for (var iY = 0; iY < item.height; iY++)
                 {
                     var iPoint = item.position + new Vector2Int(iX, iY);
-                    if (iPoint == inventoryPoint) { return true; }
+                    if (iPoint == inventoryPoint)
+                        return true;
                 }
             }
+
             return false;
         }
 
@@ -81,23 +83,25 @@ namespace FarrokhGames.Inventory
             {
                 for (var iY = 0; iY < item.height; iY++)
                 {
-                    if (item.IsPartOfShape(new Vector2Int(iX, iY)))
+                    if (!item.IsPartOfShape(new Vector2Int(iX, iY)))
+                        continue;
+
+                    var iPoint = item.position + new Vector2Int(iX, iY);
+                    for (var oX = 0; oX < otherItem.width; oX++)
                     {
-                        var iPoint = item.position + new Vector2Int(iX, iY);
-                        for (var oX = 0; oX < otherItem.width; oX++)
+                        for (var oY = 0; oY < otherItem.height; oY++)
                         {
-                            for (var oY = 0; oY < otherItem.height; oY++)
+                            if (otherItem.IsPartOfShape(new Vector2Int(oX, oY)))
                             {
-                                if (otherItem.IsPartOfShape(new Vector2Int(oX, oY)))
-                                {
-                                    var oPoint = otherItem.position + new Vector2Int(oX, oY);
-                                    if (oPoint == iPoint) { return true; } // Hit! Items overlap
-                                }
+                                var oPoint = otherItem.position + new Vector2Int(oX, oY);
+                                if (oPoint == iPoint)
+                                    return true; // Hit! Items overlap
                             }
                         }
                     }
                 }
             }
+
             return false; // Items does not overlap
         }
     }

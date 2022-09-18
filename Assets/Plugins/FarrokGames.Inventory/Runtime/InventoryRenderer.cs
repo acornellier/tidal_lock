@@ -71,9 +71,12 @@ namespace FarrokhGames.Inventory
         public void SetInventory(IInventoryManager inventoryManager)
         {
             OnDisable();
+
             inventory = inventoryManager ??
                         throw new ArgumentNullException(nameof(inventoryManager));
-            OnEnable();
+
+            if (gameObject.activeInHierarchy && enabled)
+                OnEnable();
         }
 
         /// <summary>
@@ -96,26 +99,26 @@ namespace FarrokhGames.Inventory
         */
         void OnEnable()
         {
-            if (inventory != null && !_haveListeners)
-            {
-                if (_cellSpriteEmpty == null)
-                    throw new NullReferenceException("Sprite for empty cell is null");
-                if (_cellSpriteSelected == null)
-                    throw new NullReferenceException("Sprite for selected cells is null.");
-                if (_cellSpriteBlocked == null)
-                    throw new NullReferenceException("Sprite for blocked cells is null.");
+            if (inventory == null || _haveListeners)
+                return;
 
-                inventory.onRebuilt += ReRenderAllItems;
-                inventory.onItemAdded += HandleItemAdded;
-                inventory.onItemRemoved += HandleItemRemoved;
-                inventory.onItemDropped += HandleItemRemoved;
-                inventory.onResized += HandleResized;
-                _haveListeners = true;
+            if (_cellSpriteEmpty == null)
+                throw new NullReferenceException("Sprite for empty cell is null");
+            if (_cellSpriteSelected == null)
+                throw new NullReferenceException("Sprite for selected cells is null.");
+            if (_cellSpriteBlocked == null)
+                throw new NullReferenceException("Sprite for blocked cells is null.");
 
-                // Render inventory
-                ReRenderGrid();
-                ReRenderAllItems();
-            }
+            inventory.onRebuilt += ReRenderAllItems;
+            inventory.onItemAdded += HandleItemAdded;
+            inventory.onItemRemoved += HandleItemRemoved;
+            inventory.onItemDropped += HandleItemRemoved;
+            inventory.onResized += HandleResized;
+            _haveListeners = true;
+
+            // Render inventory
+            ReRenderGrid();
+            ReRenderAllItems();
         }
 
         /* 
@@ -123,15 +126,15 @@ namespace FarrokhGames.Inventory
         */
         void OnDisable()
         {
-            if (inventory != null && _haveListeners)
-            {
-                inventory.onRebuilt -= ReRenderAllItems;
-                inventory.onItemAdded -= HandleItemAdded;
-                inventory.onItemRemoved -= HandleItemRemoved;
-                inventory.onItemDropped -= HandleItemRemoved;
-                inventory.onResized -= HandleResized;
-                _haveListeners = false;
-            }
+            if (inventory == null || !_haveListeners)
+                return;
+
+            inventory.onRebuilt -= ReRenderAllItems;
+            inventory.onItemAdded -= HandleItemAdded;
+            inventory.onItemRemoved -= HandleItemRemoved;
+            inventory.onItemDropped -= HandleItemRemoved;
+            inventory.onResized -= HandleResized;
+            _haveListeners = false;
         }
 
         /*

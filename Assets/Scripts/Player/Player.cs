@@ -14,6 +14,7 @@ public class Player : MonoBehaviour, IPersistableData
     [SerializeField] PlayerController _controller;
     [SerializeField] Animations _animations;
 
+    public PlayerController controller => _controller;
     public InventoryManager inventory { get; private set; }
 
     AnimancerComponent _animancer;
@@ -66,7 +67,7 @@ public class Player : MonoBehaviour, IPersistableData
 
     void UpdateMovement()
     {
-        var moveInput = _controller.actions.Move.ReadValue<Vector2>();
+        var moveInput = _controller.MoveValue();
         var movement = _speed * Time.fixedDeltaTime * moveInput;
 
         _body.MovePosition((Vector2)transform.position + movement);
@@ -74,7 +75,7 @@ public class Player : MonoBehaviour, IPersistableData
 
     void UpdateDirection()
     {
-        var moveInput = _controller.actions.Move.ReadValue<Vector2>();
+        var moveInput = _controller.MoveValue();
         if (moveInput == default || moveInput == _facingDirection)
             return;
 
@@ -102,7 +103,7 @@ public class Player : MonoBehaviour, IPersistableData
 
     DirectionalAnimationSet GetDirectionalAnimationSet()
     {
-        var moveInput = _controller.actions.Move.ReadValue<Vector2>();
+        var moveInput = _controller.MoveValue();
         return moveInput == default ? _animations.idle : _animations.walk;
     }
 

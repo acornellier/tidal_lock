@@ -1,20 +1,21 @@
 ﻿using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Zenject;
 
 public class PlayerController : MonoBehaviour
 {
-    public InputActions.PlayerActions actions;
-
     public Action onLeftClick;
     public Action onRightClick;
+    public Action onBag;
+
+    InputActions.PlayerActions _actions;
 
     void Awake()
     {
-        actions = new InputActions().Player;
-        actions.LeftClick.performed += HandleLeftClick;
-        actions.RightClick.performed += HandleRightClick;
+        _actions = new InputActions().Player;
+        _actions.LeftClick.performed += HandleLeftClick;
+        _actions.RightClick.performed += HandleRightClick;
+        _actions.Bag.performed += HandleBag;
     }
 
     void OnEnable()
@@ -27,14 +28,19 @@ public class PlayerController : MonoBehaviour
         DisableControls();
     }
 
+    public Vector2 MoveValue()
+    {
+        return _actions.Move.ReadValue<Vector2>();
+    }
+
     void EnableControls()
     {
-        actions.Enable();
+        _actions.Enable();
     }
 
     void DisableControls()
     {
-        actions.Disable();
+        _actions.Disable();
     }
 
     void HandleLeftClick(InputAction.CallbackContext obj)
@@ -45,5 +51,10 @@ public class PlayerController : MonoBehaviour
     void HandleRightClick(InputAction.CallbackContext obj)
     {
         onRightClick?.Invoke();
+    }
+
+    void HandleBag(InputAction.CallbackContext obj)
+    {
+        onBag?.Invoke();
     }
 }

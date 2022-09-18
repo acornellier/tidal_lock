@@ -9,7 +9,7 @@ namespace FarrokhGames.Inventory
         /// Invoked when an item is added to the inventory
         /// </summary>
         Action<IInventoryItem> onItemAdded { get; set; }
-        
+
         /// <summary>
         /// Invoked when an item was not able to be added to the inventory
         /// </summary>
@@ -24,12 +24,12 @@ namespace FarrokhGames.Inventory
         /// Invoked when an item is removed from the inventory and should be placed on the ground.
         /// </summary>
         Action<IInventoryItem> onItemDropped { get; set; }
-        
+
         /// <summary>
         /// Invoked when an item was unable to be placed on the ground (most likely to its canDrop being set to false)
         /// </summary>
         Action<IInventoryItem> onItemDroppedFailed { get; set; }
-        
+
         /// <summary>
         /// Invoked when the inventory is rebuilt from scratch
         /// </summary>
@@ -99,7 +99,7 @@ namespace FarrokhGames.Inventory
         /// <summary>
         /// Returns true ifits possible to swap this item
         /// </summary>
-        bool CanSwap(IInventoryItem item);
+        bool CanSwapAt(IInventoryItem item, Vector2Int position);
 
         /// <summary>
         /// Removes given item from this inventory. Returns

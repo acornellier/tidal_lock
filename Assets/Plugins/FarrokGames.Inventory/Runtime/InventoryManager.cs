@@ -243,11 +243,9 @@ namespace FarrokhGames.Inventory
         }
 
         /// <inheritdoc />
-        public bool CanSwap(IInventoryItem item)
+        public bool CanSwapAt(IInventoryItem item, Vector2Int position)
         {
-            // TODO
-            return false;
-            // return DoesItemFit(item) && _provider.CanAddInventoryItem(item);
+            return DoesItemFit(item) && _provider.CanAddInventoryItem(item);
         }
 
         /// <inheritdoc />
