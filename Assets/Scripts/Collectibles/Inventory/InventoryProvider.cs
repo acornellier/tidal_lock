@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using FarrokhGames.Inventory;
 
 public class InventoryProvider : IInventoryProvider
 {

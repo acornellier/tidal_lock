@@ -62,6 +62,15 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Crafting"",
+                    ""type"": ""Button"",
+                    ""id"": ""61d8f404-ab1d-4b40-a0cc-0298cdc952b8"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -227,6 +236,17 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": ""Keyboard&Mouse"",
                     ""action"": ""Bag"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4ea3fa99-9c7f-46a4-bffb-639a85a53ff5"",
+                    ""path"": ""<Keyboard>/c"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Crafting"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -818,6 +838,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         m_Player_LeftClick = m_Player.FindAction("LeftClick", throwIfNotFound: true);
         m_Player_RightClick = m_Player.FindAction("RightClick", throwIfNotFound: true);
         m_Player_Bag = m_Player.FindAction("Bag", throwIfNotFound: true);
+        m_Player_Crafting = m_Player.FindAction("Crafting", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -893,6 +914,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_LeftClick;
     private readonly InputAction m_Player_RightClick;
     private readonly InputAction m_Player_Bag;
+    private readonly InputAction m_Player_Crafting;
     public struct PlayerActions
     {
         private @InputActions m_Wrapper;
@@ -901,6 +923,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         public InputAction @LeftClick => m_Wrapper.m_Player_LeftClick;
         public InputAction @RightClick => m_Wrapper.m_Player_RightClick;
         public InputAction @Bag => m_Wrapper.m_Player_Bag;
+        public InputAction @Crafting => m_Wrapper.m_Player_Crafting;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -922,6 +945,9 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                 @Bag.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBag;
                 @Bag.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBag;
                 @Bag.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnBag;
+                @Crafting.started -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrafting;
+                @Crafting.performed -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrafting;
+                @Crafting.canceled -= m_Wrapper.m_PlayerActionsCallbackInterface.OnCrafting;
             }
             m_Wrapper.m_PlayerActionsCallbackInterface = instance;
             if (instance != null)
@@ -938,6 +964,9 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
                 @Bag.started += instance.OnBag;
                 @Bag.performed += instance.OnBag;
                 @Bag.canceled += instance.OnBag;
+                @Crafting.started += instance.OnCrafting;
+                @Crafting.performed += instance.OnCrafting;
+                @Crafting.canceled += instance.OnCrafting;
             }
         }
     }
@@ -1098,6 +1127,7 @@ public partial class @InputActions : IInputActionCollection2, IDisposable
         void OnLeftClick(InputAction.CallbackContext context);
         void OnRightClick(InputAction.CallbackContext context);
         void OnBag(InputAction.CallbackContext context);
+        void OnCrafting(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

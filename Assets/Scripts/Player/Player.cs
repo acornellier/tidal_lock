@@ -1,6 +1,5 @@
 ﻿using System;
 using Animancer;
-using FarrokhGames.Inventory;
 using UnityEngine;
 
 [RequireComponent(typeof(AnimancerComponent))]

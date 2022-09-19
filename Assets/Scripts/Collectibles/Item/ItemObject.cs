@@ -1,13 +1,23 @@
-﻿using System.Collections.Generic;
-using FarrokhGames.Inventory;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
+
+[Serializable]
+public class Ingredient
+{
+    public ItemObject item;
+    public int quantity;
+}
 
 [CreateAssetMenu(fileName = "ItemObject", menuName = "Inventory/ItemObject", order = 0)]
 public class ItemObject : ScriptableObject, IInventoryItem
 {
     [SerializeField] Sprite _sprite;
     [SerializeField] InventoryShape _shape;
-    [SerializeField] List<ItemObject> _craftingIngredients;
+    [SerializeField] List<Ingredient> _ingredients;
+
+    public string Name => name;
 
     public Sprite sprite => _sprite;
 
@@ -19,7 +29,10 @@ public class ItemObject : ScriptableObject, IInventoryItem
 
     public bool canDrop => true;
 
-    public List<ItemObject> craftingIngredients => _craftingIngredients;
+    public IEnumerable<Ingredient> ingredients => _ingredients;
+
+    public IEnumerable<Ingredient> sortedIngredients =>
+        _ingredients.OrderBy(ingredient => ingredient.item.name);
 
     public bool IsPartOfShape(Vector2Int localPosition)
     {

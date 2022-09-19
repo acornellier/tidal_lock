@@ -7,7 +7,8 @@ public class PlayerController : MonoBehaviour
 {
     public Action onLeftClick;
     public Action onRightClick;
-    public Action onBag;
+    public Action onToggleBag;
+    public Action onToggleCrafting;
 
     InputActions.PlayerActions _actions;
     bool _pointerOverUi;
@@ -18,6 +19,7 @@ public class PlayerController : MonoBehaviour
         _actions.LeftClick.performed += HandleLeftClick;
         _actions.RightClick.performed += HandleRightClick;
         _actions.Bag.performed += HandleBag;
+        _actions.Crafting.performed += HandleCrafting;
     }
 
     void OnEnable()
@@ -66,6 +68,11 @@ public class PlayerController : MonoBehaviour
 
     void HandleBag(InputAction.CallbackContext ctx)
     {
-        onBag?.Invoke();
+        onToggleBag?.Invoke();
+    }
+
+    void HandleCrafting(InputAction.CallbackContext obj)
+    {
+        onToggleCrafting?.Invoke();
     }
 }
