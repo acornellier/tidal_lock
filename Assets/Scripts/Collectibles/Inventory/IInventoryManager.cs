@@ -6,27 +6,27 @@ public interface IInventoryManager : IDisposable
     /// <summary>
     /// Invoked when an item is added to the inventory
     /// </summary>
-    Action<IInventoryItem> onItemAdded { get; set; }
+    Action<ItemObject> onItemAdded { get; set; }
 
     /// <summary>
     /// Invoked when an item was not able to be added to the inventory
     /// </summary>
-    Action<IInventoryItem> onItemAddedFailed { get; set; }
+    Action<ItemObject> onItemAddedFailed { get; set; }
 
     /// <summary>
     /// Invoked when an item is removed to the inventory
     /// </summary>
-    Action<IInventoryItem> onItemRemoved { get; set; }
+    Action<ItemObject> onItemRemoved { get; set; }
 
     /// <summary>
     /// Invoked when an item is removed from the inventory and should be placed on the ground.
     /// </summary>
-    Action<IInventoryItem> onItemDropped { get; set; }
+    Action<ItemObject> onItemDropped { get; set; }
 
     /// <summary>
     /// Invoked when an item was unable to be placed on the ground (most likely to its canDrop being set to false)
     /// </summary>
-    Action<IInventoryItem> onItemDroppedFailed { get; set; }
+    Action<ItemObject> onItemDroppedFailed { get; set; }
 
     /// <summary>
     /// Invoked when the inventory is rebuilt from scratch
@@ -56,12 +56,12 @@ public interface IInventoryManager : IDisposable
     /// <summary>
     /// Returns all items inside this inventory
     /// </summary>
-    IInventoryItem[] allItems { get; }
+    ItemObject[] allItems { get; }
 
     /// <summary>
     /// Returns true if given item is present in this inventory
     /// </summary>
-    bool Contains(IInventoryItem item);
+    bool Contains(ItemObject item);
 
     /// <summary>
     /// Returns true if this inventory is full
@@ -71,50 +71,50 @@ public interface IInventoryManager : IDisposable
     /// <summary>
     /// Returns true if its possible to add given item
     /// </summary>
-    bool CanAdd(IInventoryItem item);
+    bool CanAdd(ItemObject item);
 
     /// <summary>
     /// Add given item to the inventory. Returns true
     /// if successful
     /// </summary>
-    bool TryAdd(IInventoryItem item);
+    bool TryAdd(ItemObject item);
 
     /// <summary>
     /// Returns true if its possible to add item at location
     /// </summary>
-    bool CanAddAt(IInventoryItem item, Vector2Int point);
+    bool CanAddAt(ItemObject item, Vector2Int point);
 
     /// <summary>
     /// Tries to add item att location and returns true if successful
     /// </summary>
-    bool TryAddAt(IInventoryItem item, Vector2Int point);
+    bool TryAddAt(ItemObject item, Vector2Int point);
 
     /// <summary>
     /// Returns true if its possible to remove this item
     /// </summary>
-    bool CanRemove(IInventoryItem item);
+    bool CanRemove(ItemObject item);
 
     /// <summary>
     /// Returns true ifits possible to swap this item
     /// </summary>
-    bool CanSwapAt(IInventoryItem item, Vector2Int position);
+    bool CanSwapAt(ItemObject item, Vector2Int position);
 
     /// <summary>
     /// Removes given item from this inventory. Returns
     /// true if successful.
     /// </summary>
-    bool TryRemove(IInventoryItem item);
+    bool TryRemove(ItemObject item);
 
     /// <summary>
     /// Returns true if its possible to drop this item
     /// </summary>
-    bool CanDrop(IInventoryItem item);
+    bool CanDrop(ItemObject item);
 
     /// <summary>
     /// Removes an item from this inventory. Returns true
     /// if successful.
     /// </summary>
-    bool TryDrop(IInventoryItem item);
+    bool TryDrop(ItemObject item);
 
     /// <summary>
     /// Drops all items from this inventory
@@ -134,10 +134,10 @@ public interface IInventoryManager : IDisposable
     /// <summary>
     /// Get an item at given point within this inventory
     /// </summary>
-    IInventoryItem GetAtPoint(Vector2Int point);
+    ItemObject GetAtPoint(Vector2Int point);
 
     /// <summary>
     /// Returns all items under given rectangle
     /// </summary>
-    IInventoryItem[] GetAtPoint(Vector2Int point, Vector2Int size);
+    ItemObject[] GetAtPoint(Vector2Int point, Vector2Int size);
 }

@@ -11,10 +11,13 @@ public class Player : MonoBehaviour, IPersistableData
 
     [SerializeField] PlayerAudio _audio;
     [SerializeField] PlayerController _controller;
+    [SerializeField] PlayerOxygen _oxygen;
+
     [SerializeField] Animations _animations;
 
     public PlayerController controller => _controller;
-    public InventoryManager inventory { get; private set; }
+    public PlayerInventory inventory { get; private set; }
+    public PlayerOxygen oxygen => _oxygen;
 
     AnimancerComponent _animancer;
     Rigidbody2D _body;
@@ -25,9 +28,7 @@ public class Player : MonoBehaviour, IPersistableData
     {
         _animancer = GetComponent<AnimancerComponent>();
         _body = GetComponent<Rigidbody2D>();
-
-        var provider = new InventoryProvider();
-        inventory = new InventoryManager(provider, 4, 4);
+        inventory = new PlayerInventory();
     }
 
     void FixedUpdate()
@@ -61,7 +62,7 @@ public class Player : MonoBehaviour, IPersistableData
 
     public void Collect(Collectible collectible)
     {
-        inventory.TryAdd(collectible.itemObject.CreateInstance());
+        inventory.bag.TryAdd(collectible.itemObject.CreateInstance());
     }
 
     void UpdateMovement()

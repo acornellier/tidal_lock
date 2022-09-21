@@ -34,13 +34,13 @@ public class RecipePanel : MonoBehaviour
             for (var i = 0; i < ingredient.quantity; ++i)
             {
                 var itemToRemove =
-                    _player.inventory.allItems.First(item => item.Name == ingredient.item.Name);
-                if (!_player.inventory.TryRemove(itemToRemove))
+                    _player.inventory.bag.allItems.First(item => item.Name == ingredient.item.Name);
+                if (!_player.inventory.bag.TryRemove(itemToRemove))
                     throw new Exception($"Failed to remove {ingredient.item} while crafting");
             }
         }
 
-        _player.inventory.TryAdd(_itemObject.CreateInstance());
+        _player.inventory.bag.TryAdd(_itemObject.CreateInstance());
     }
 
     bool MissingIngredients()
@@ -49,7 +49,7 @@ public class RecipePanel : MonoBehaviour
             ingredient =>
             {
                 var amountInInventory =
-                    _player.inventory.allItems.Count(item => item.Name == ingredient.item.Name);
+                    _player.inventory.bag.allItems.Count(item => item.Name == ingredient.item.Name);
                 return amountInInventory < ingredient.quantity;
             }
         );

@@ -28,7 +28,7 @@ public class InventoryDraggedItem
     /// <summary>
     /// Returns the item-instance that is being dragged
     /// </summary>
-    readonly IInventoryItem _item;
+    readonly ItemObject _item;
 
     /// <summary>
     /// Gets or sets the InventoryController currently in control of this item
@@ -53,7 +53,7 @@ public class InventoryDraggedItem
         Canvas canvas,
         InventoryController originalController,
         Vector2Int originPoint,
-        IInventoryItem item,
+        ItemObject item,
         Vector2 offset)
     {
         _originalController = originalController;
@@ -71,7 +71,8 @@ public class InventoryDraggedItem
         _image.raycastTarget = false;
         _image.transform.SetParent(_canvas.transform);
         _image.transform.SetAsLastSibling();
-        _image.transform.localScale = Vector3.one;
+        // questionable 2x
+        _image.transform.localScale = 2 * Vector3.one;
         _image.sprite = item.sprite;
         _image.SetNativeSize();
     }

@@ -9,5 +9,6 @@ public class Collectible : MonoBehaviour, IInteractable
     public void Interact(Player player)
     {
         player.Collect(this);
+        Utilities.DestroyGameObject(gameObject);
     }
 }

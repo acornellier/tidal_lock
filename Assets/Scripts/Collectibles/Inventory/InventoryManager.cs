@@ -64,7 +64,7 @@ public class InventoryManager : IInventoryManager
 
     void Rebuild(bool silent)
     {
-        allItems = new IInventoryItem[_provider.inventoryItemCount];
+        allItems = new ItemObject[_provider.inventoryItemCount];
         for (var i = 0; i < _provider.inventoryItemCount; i++)
         {
             allItems[i] = _provider.GetInventoryItem(i);
@@ -100,39 +100,39 @@ public class InventoryManager : IInventoryManager
     }
 
     /// <inheritdoc />
-    public IInventoryItem[] allItems { get; private set; }
+    public ItemObject[] allItems { get; private set; }
 
     /// <inheritdoc />
     public Action onRebuilt { get; set; }
 
     /// <inheritdoc />
-    public Action<IInventoryItem> onItemDropped { get; set; }
+    public Action<ItemObject> onItemDropped { get; set; }
 
     /// <inheritdoc />
-    public Action<IInventoryItem> onItemDroppedFailed { get; set; }
+    public Action<ItemObject> onItemDroppedFailed { get; set; }
 
     /// <inheritdoc />
-    public Action<IInventoryItem> onItemAdded { get; set; }
+    public Action<ItemObject> onItemAdded { get; set; }
 
     /// <inheritdoc />
-    public Action<IInventoryItem> onItemAddedFailed { get; set; }
+    public Action<ItemObject> onItemAddedFailed { get; set; }
 
     /// <inheritdoc />
-    public Action<IInventoryItem> onItemRemoved { get; set; }
+    public Action<ItemObject> onItemRemoved { get; set; }
 
     /// <inheritdoc />
     public Action onResized { get; set; }
 
     /// <inheritdoc />
-    public IInventoryItem GetAtPoint(Vector2Int point)
+    public ItemObject GetAtPoint(Vector2Int point)
     {
         return allItems.FirstOrDefault(item => item.Contains(point));
     }
 
     /// <inheritdoc />
-    public IInventoryItem[] GetAtPoint(Vector2Int point, Vector2Int size)
+    public ItemObject[] GetAtPoint(Vector2Int point, Vector2Int size)
     {
-        var posibleItems = new IInventoryItem[size.x * size.y];
+        var posibleItems = new ItemObject[size.x * size.y];
         var c = 0;
         for (var x = 0; x < size.x; x++)
         {
@@ -147,7 +147,7 @@ public class InventoryManager : IInventoryManager
     }
 
     /// <inheritdoc />
-    public bool TryRemove(IInventoryItem item)
+    public bool TryRemove(ItemObject item)
     {
         if (!CanRemove(item)) return false;
         if (!_provider.RemoveInventoryItem(item)) return false;
@@ -157,7 +157,7 @@ public class InventoryManager : IInventoryManager
     }
 
     /// <inheritdoc />
-    public bool TryDrop(IInventoryItem item)
+    public bool TryDrop(ItemObject item)
     {
         if (!CanDrop(item) || !_provider.DropInventoryItem(item))
         {
@@ -170,7 +170,7 @@ public class InventoryManager : IInventoryManager
         return true;
     }
 
-    internal bool TryForceDrop(IInventoryItem item)
+    internal bool TryForceDrop(ItemObject item)
     {
         if (!item.canDrop)
         {
@@ -183,7 +183,7 @@ public class InventoryManager : IInventoryManager
     }
 
     /// <inheritdoc />
-    public bool CanAddAt(IInventoryItem item, Vector2Int point)
+    public bool CanAddAt(ItemObject item, Vector2Int point)
     {
         if (!_provider.CanAddInventoryItem(item) || _provider.isInventoryFull)
             return false;
@@ -209,7 +209,7 @@ public class InventoryManager : IInventoryManager
     }
 
     /// <inheritdoc />
-    public bool TryAddAt(IInventoryItem item, Vector2Int point)
+    public bool TryAddAt(ItemObject item, Vector2Int point)
     {
         if (!CanAddAt(item, point) || !_provider.AddInventoryItem(item))
         {
@@ -225,7 +225,7 @@ public class InventoryManager : IInventoryManager
     }
 
     /// <inheritdoc />
-    public bool CanAdd(IInventoryItem item)
+    public bool CanAdd(ItemObject item)
     {
         return !Contains(item) &&
                GetFirstPointThatFitsItem(item, out var point) &&
@@ -233,7 +233,7 @@ public class InventoryManager : IInventoryManager
     }
 
     /// <inheritdoc />
-    public bool TryAdd(IInventoryItem item)
+    public bool TryAdd(ItemObject item)
     {
         return CanAdd(item) &&
                GetFirstPointThatFitsItem(item, out var point) &&
@@ -241,7 +241,7 @@ public class InventoryManager : IInventoryManager
     }
 
     /// <inheritdoc />
-    public bool CanSwapAt(IInventoryItem item, Vector2Int position)
+    public bool CanSwapAt(ItemObject item, Vector2Int position)
     {
         return DoesItemFit(item) && _provider.CanAddInventoryItem(item);
     }
@@ -265,19 +265,19 @@ public class InventoryManager : IInventoryManager
     }
 
     /// <inheritdoc />
-    public bool Contains(IInventoryItem item)
+    public bool Contains(ItemObject item)
     {
         return allItems.Contains(item);
     }
 
     /// <inheritdoc />
-    public bool CanRemove(IInventoryItem item)
+    public bool CanRemove(ItemObject item)
     {
         return Contains(item) && _provider.CanRemoveInventoryItem(item);
     }
 
     /// <inheritdoc />
-    public bool CanDrop(IInventoryItem item)
+    public bool CanDrop(ItemObject item)
     {
         return Contains(item) && _provider.CanDropInventoryItem(item) && item.canDrop;
     }
@@ -285,7 +285,7 @@ public class InventoryManager : IInventoryManager
     /*
      * Get first free point that will fit the given item
      */
-    bool GetFirstPointThatFitsItem(IInventoryItem item, out Vector2Int point)
+    bool GetFirstPointThatFitsItem(ItemObject item, out Vector2Int point)
     {
         if (DoesItemFit(item))
             for (var y = 0; y < height - (item.height - 1); y++)
@@ -304,7 +304,7 @@ public class InventoryManager : IInventoryManager
     /* 
      * Returns true if given items physically fits within this inventory
      */
-    bool DoesItemFit(IInventoryItem item)
+    bool DoesItemFit(ItemObject item)
     {
         return item.width <= width && item.height <= height;
     }
@@ -312,7 +312,7 @@ public class InventoryManager : IInventoryManager
     /*
      * Returns the center post position for a given item within this inventory
      */
-    Vector2Int GetCenterPosition(IInventoryItem item)
+    Vector2Int GetCenterPosition(ItemObject item)
     {
         return new Vector2Int(
             (_size.x - item.width) / 2,

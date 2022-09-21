@@ -41,12 +41,15 @@ public class PlayerMouse : MonoBehaviour
         for (var i = 0; i < size; ++i)
         {
             var col = _results[i];
+            var interactable = col.GetComponent<IInteractable>();
+            if (interactable == null)
+                continue;
+
             var closestPoint = col.ClosestPoint(transform.position);
             if (Vector2.Distance(transform.position, closestPoint) > _interactRange)
                 continue;
 
-            var interactable = col.GetComponent<IInteractable>();
-            interactable?.Interact(_player);
+            interactable.Interact(_player);
             return;
         }
     }

@@ -16,17 +16,14 @@ public class ItemObject : ScriptableObject, IInventoryItem
     [SerializeField] Sprite _sprite;
     [SerializeField] InventoryShape _shape;
     [SerializeField] List<Ingredient> _ingredients;
+    [SerializeField] bool _isEquipment;
 
     public string Name => name;
-
     public Sprite sprite => _sprite;
-
     public Vector2Int position { get; set; } = Vector2Int.zero;
-
     public int width => _shape.width;
-
     public int height => _shape.height;
-
+    public bool isEquipment => _isEquipment;
     public bool canDrop => true;
 
     public IEnumerable<Ingredient> ingredients => _ingredients;
@@ -39,7 +36,7 @@ public class ItemObject : ScriptableObject, IInventoryItem
         return _shape.IsPartOfShape(localPosition);
     }
 
-    public IInventoryItem CreateInstance()
+    public ItemObject CreateInstance()
     {
         var clone = Instantiate(this);
         clone.name = clone.name[..^7]; // Remove (Clone) from name

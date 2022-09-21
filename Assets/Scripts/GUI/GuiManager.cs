@@ -4,7 +4,8 @@ using Zenject;
 public class GuiManager : MonoBehaviour
 {
     [SerializeField] GameObject _inventoryCanvas;
-    [SerializeField] InventoryRenderer _inventoryRenderer;
+    [SerializeField] InventoryRenderer _bagRenderer;
+    [SerializeField] InventoryRenderer _equipmentRenderer;
 
     [SerializeField] GameObject _craftingCanvas;
 
@@ -24,7 +25,8 @@ public class GuiManager : MonoBehaviour
 
     void Start()
     {
-        _inventoryRenderer.SetInventory(_player.inventory);
+        _bagRenderer.SetInventory(_player.inventory.bag);
+        _equipmentRenderer.SetInventory(_player.inventory.equipment);
     }
 
     void ToggleInventory()

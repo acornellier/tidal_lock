@@ -2,54 +2,32 @@ using System;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public interface IInventoryController
-{
-    Action<IInventoryItem> onItemHovered { get; set; }
-    Action<IInventoryItem> onItemPickedUp { get; set; }
-    Action<IInventoryItem> onItemAdded { get; set; }
-    Action<IInventoryItem> onItemSwapped { get; set; }
-    Action<IInventoryItem> onItemReturned { get; set; }
-    Action<IInventoryItem> onItemDropped { get; set; }
-}
-
 /// <summary>
 /// Enables human interaction with an inventory renderer using Unity's event systems
 /// </summary>
 [RequireComponent(typeof(InventoryRenderer))]
 public class InventoryController : MonoBehaviour,
     IPointerDownHandler, IBeginDragHandler, IDragHandler,
-    IEndDragHandler, IPointerExitHandler, IPointerEnterHandler,
-    IInventoryController
+    IEndDragHandler, IPointerExitHandler, IPointerEnterHandler
 {
     // The dragged item is static and shared by all controllers
     // This way items can be moved between controllers easily
     static InventoryDraggedItem _draggedItem;
 
-    /// <inheritdoc />
-    public Action<IInventoryItem> onItemHovered { get; set; }
-
-    /// <inheritdoc />
-    public Action<IInventoryItem> onItemPickedUp { get; set; }
-
-    /// <inheritdoc />
-    public Action<IInventoryItem> onItemAdded { get; set; }
-
-    /// <inheritdoc />
-    public Action<IInventoryItem> onItemSwapped { get; set; }
-
-    /// <inheritdoc />
-    public Action<IInventoryItem> onItemReturned { get; set; }
-
-    /// <inheritdoc />
-    public Action<IInventoryItem> onItemDropped { get; set; }
+    public Action<ItemObject> onItemHovered { get; set; }
+    public Action<ItemObject> onItemPickedUp { get; set; }
+    public Action<ItemObject> onItemAdded { get; set; }
+    public Action<ItemObject> onItemSwapped { get; set; }
+    public Action<ItemObject> onItemReturned { get; set; }
+    public Action<ItemObject> onItemDropped { get; set; }
 
     Canvas _canvas;
     internal InventoryRenderer inventoryRenderer;
     internal InventoryManager inventory => (InventoryManager)inventoryRenderer.inventory;
 
-    IInventoryItem _itemToDrag;
+    ItemObject _itemToDrag;
     PointerEventData _currentEventData;
-    IInventoryItem _lastHoveredItem;
+    ItemObject _lastHoveredItem;
 
     /*
      * Setup

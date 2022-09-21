@@ -279,7 +279,7 @@ public class InventoryRenderer : MonoBehaviour
                 if (p.x < 0 || p.x >= inventory.width || p.y < 0 || p.y >= inventory.height)
                     continue;
 
-                var index = p.y * inventory.height + p.x;
+                var index = p.y * inventory.width + p.x;
                 _grids[index].sprite = blocked ? _cellSpriteBlocked : _cellSpriteSelected;
                 _grids[index].color = color;
             }
