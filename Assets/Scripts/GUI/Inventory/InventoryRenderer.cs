@@ -13,6 +13,8 @@ public class InventoryRenderer : MonoBehaviour
     [Tooltip("The size of the cells building up the inventory")]
     Vector2Int _cellSize = new(32, 32);
 
+    [SerializeField] Vector2Int _cellBorder = new(1, 1);
+
     [SerializeField]
     [Tooltip("The sprite to use for empty cells")]
     Sprite _cellSpriteEmpty;
@@ -79,7 +81,7 @@ public class InventoryRenderer : MonoBehaviour
     /// <summary>
     /// Returns the RectTransform for this renderer
     /// </summary>
-    public RectTransform rectTransform { get; private set; }
+    RectTransform rectTransform { get; set; }
 
     /// <summary>
     /// Returns the RectTransform for this renderer
@@ -160,7 +162,7 @@ public class InventoryRenderer : MonoBehaviour
         {
             for (var x = 0; x < inventory.width; x++)
             {
-                var grid = CreateImage(_cellSpriteEmpty, true);
+                var grid = CreateImage(_cellSpriteEmpty, false);
                 grid.gameObject.name = "Grid " + c;
                 grid.type = Image.Type.Sliced;
                 grid.rectTransform.localPosition =
@@ -202,7 +204,7 @@ public class InventoryRenderer : MonoBehaviour
     */
     void HandleItemAdded(IInventoryItem item)
     {
-        var img = CreateImage(item.sprite, false);
+        var img = CreateImage(item.sprite, true);
         img.rectTransform.localPosition = GetItemOffset(item);
         _items.Add(item, img);
     }
@@ -233,15 +235,17 @@ public class InventoryRenderer : MonoBehaviour
     /*
      * Create an image with given sprite and settings
      */
-    Image CreateImage(Sprite sprite, bool raycastTarget)
+    Image CreateImage(Sprite sprite, bool isItem)
     {
         var img = _imagePool.Take();
         img.gameObject.SetActive(true);
         img.sprite = sprite;
+        // sketch 2x
         img.rectTransform.sizeDelta = cellSize;
+        if (isItem) img.rectTransform.sizeDelta -= 2 * _cellBorder;
         img.transform.SetAsLastSibling();
         img.type = Image.Type.Simple;
-        img.raycastTarget = raycastTarget;
+        img.raycastTarget = !isItem;
         return img;
     }
 
@@ -303,8 +307,7 @@ public class InventoryRenderer : MonoBehaviour
     */
     internal Vector2 GetItemOffset(IInventoryItem item)
     {
-        var x = item.position.x * cellSize.x;
-        var y = -item.position.y * cellSize.y;
-        return new Vector2(x, y);
+        var position = item.position * cellSize + _cellBorder;
+        return new Vector2(position.x, -position.y);
     }
 }

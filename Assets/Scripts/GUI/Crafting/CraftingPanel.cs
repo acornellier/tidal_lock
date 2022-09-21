@@ -7,7 +7,7 @@ public class CraftingPanel : MonoBehaviour
     [SerializeField] RecipePanel _recipePanel;
     [SerializeField] GameObject _recipeList;
     [SerializeField] RecipeButton _recipeButtonPrefab;
-    [SerializeField] List<ItemObject> _knownRecipes;
+    [SerializeField] List<Item> _knownRecipes;
 
     void Awake()
     {

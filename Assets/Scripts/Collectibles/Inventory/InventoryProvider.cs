@@ -2,20 +2,20 @@ using System.Collections.Generic;
 
 public class InventoryProvider : IInventoryProvider
 {
-    readonly List<ItemObject> _items = new();
+    readonly List<IInventoryItem> _items = new();
 
-    readonly bool _equipmentOnly;
+    readonly ItemSlot _itemSlot;
 
-    public InventoryProvider(bool equipmentOnly = false)
+    public InventoryProvider(ItemSlot itemSlot = ItemSlot.Any)
     {
-        _equipmentOnly = equipmentOnly;
+        _itemSlot = itemSlot;
     }
 
     public int inventoryItemCount => _items.Count;
 
     public bool isInventoryFull => false;
 
-    public bool AddInventoryItem(ItemObject item)
+    public bool AddInventoryItem(IInventoryItem item)
     {
         if (!_items.Contains(item))
         {
@@ -26,32 +26,32 @@ public class InventoryProvider : IInventoryProvider
         return false;
     }
 
-    public bool DropInventoryItem(ItemObject item)
+    public bool DropInventoryItem(IInventoryItem item)
     {
         return RemoveInventoryItem(item);
     }
 
-    public ItemObject GetInventoryItem(int index)
+    public IInventoryItem GetInventoryItem(int index)
     {
         return _items[index];
     }
 
-    public bool CanAddInventoryItem(ItemObject item)
+    public bool CanAddInventoryItem(IInventoryItem item)
     {
-        return !_equipmentOnly || item.isEquipment;
+        return _itemSlot == ItemSlot.Any || ((Item)item).GetSlot() == ItemSlot.Equipment;
     }
 
-    public bool CanRemoveInventoryItem(ItemObject item)
-    {
-        return true;
-    }
-
-    public bool CanDropInventoryItem(ItemObject item)
+    public bool CanRemoveInventoryItem(IInventoryItem item)
     {
         return true;
     }
 
-    public bool RemoveInventoryItem(ItemObject item)
+    public bool CanDropInventoryItem(IInventoryItem item)
+    {
+        return true;
+    }
+
+    public bool RemoveInventoryItem(IInventoryItem item)
     {
         return _items.Remove(item);
     }

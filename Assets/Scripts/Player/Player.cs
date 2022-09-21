@@ -28,7 +28,7 @@ public class Player : MonoBehaviour, IPersistableData
     {
         _animancer = GetComponent<AnimancerComponent>();
         _body = GetComponent<Rigidbody2D>();
-        inventory = new PlayerInventory();
+        inventory = new PlayerInventory(this);
     }
 
     void FixedUpdate()
@@ -62,7 +62,7 @@ public class Player : MonoBehaviour, IPersistableData
 
     public void Collect(Collectible collectible)
     {
-        inventory.bag.TryAdd(collectible.itemObject.CreateInstance());
+        inventory.bag.TryAdd(collectible.item.CreateInstance());
     }
 
     void UpdateMovement()

@@ -6,24 +6,22 @@ using UnityEngine;
 [Serializable]
 public class Ingredient
 {
-    public ItemObject item;
+    public Item item;
     public int quantity;
 }
 
-[CreateAssetMenu(fileName = "ItemObject", menuName = "Inventory/ItemObject", order = 0)]
-public class ItemObject : ScriptableObject, IInventoryItem
+[CreateAssetMenu(fileName = "Item", menuName = "Item/Item", order = 0)]
+public class Item : ScriptableObject, IInventoryItem
 {
     [SerializeField] Sprite _sprite;
     [SerializeField] InventoryShape _shape;
     [SerializeField] List<Ingredient> _ingredients;
-    [SerializeField] bool _isEquipment;
 
     public string Name => name;
     public Sprite sprite => _sprite;
     public Vector2Int position { get; set; } = Vector2Int.zero;
     public int width => _shape.width;
     public int height => _shape.height;
-    public bool isEquipment => _isEquipment;
     public bool canDrop => true;
 
     public IEnumerable<Ingredient> ingredients => _ingredients;
@@ -36,7 +34,12 @@ public class ItemObject : ScriptableObject, IInventoryItem
         return _shape.IsPartOfShape(localPosition);
     }
 
-    public ItemObject CreateInstance()
+    public virtual ItemSlot GetSlot()
+    {
+        return ItemSlot.Any;
+    }
+
+    public Item CreateInstance()
     {
         var clone = Instantiate(this);
         clone.name = clone.name[..^7]; // Remove (Clone) from name

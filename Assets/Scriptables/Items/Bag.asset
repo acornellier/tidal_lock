@@ -9,7 +9,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b6e475e2d6a041cb9e4d114a06053564, type: 3}
+  m_Script: {fileID: 11500000, guid: 0efdc4c035444a6996c8ab8c16dc412f, type: 3}
   m_Name: Bag
   m_EditorClassIdentifier: 
   _sprite: {fileID: 21300000, guid: 37946d7ffd4f1744a8353e0d88783ccd, type: 3}
@@ -21,3 +21,4 @@ MonoBehaviour:
     quantity: 2
   - item: {fileID: 11400000, guid: 76319e26cfce9da48bdae6b02d2c57cc, type: 2}
     quantity: 1
+  _maxOxygenIncrease: 10

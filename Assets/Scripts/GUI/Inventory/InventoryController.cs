@@ -14,20 +14,13 @@ public class InventoryController : MonoBehaviour,
     // This way items can be moved between controllers easily
     static InventoryDraggedItem _draggedItem;
 
-    public Action<ItemObject> onItemHovered { get; set; }
-    public Action<ItemObject> onItemPickedUp { get; set; }
-    public Action<ItemObject> onItemAdded { get; set; }
-    public Action<ItemObject> onItemSwapped { get; set; }
-    public Action<ItemObject> onItemReturned { get; set; }
-    public Action<ItemObject> onItemDropped { get; set; }
-
     Canvas _canvas;
     internal InventoryRenderer inventoryRenderer;
     internal InventoryManager inventory => (InventoryManager)inventoryRenderer.inventory;
 
-    ItemObject _itemToDrag;
+    IInventoryItem _itemToDrag;
     PointerEventData _currentEventData;
-    ItemObject _lastHoveredItem;
+    IInventoryItem _lastHoveredItem;
 
     /*
      * Setup
@@ -42,7 +35,7 @@ public class InventoryController : MonoBehaviour,
         var canvases = GetComponentsInParent<Canvas>();
         if (canvases.Length == 0)
             throw new NullReferenceException("Could not find a canvas.");
-        _canvas = canvases[canvases.Length - 1];
+        _canvas = canvases[^1];
     }
 
     /*
@@ -80,8 +73,6 @@ public class InventoryController : MonoBehaviour,
 
         // Remove the item from inventory
         inventory.TryRemove(_itemToDrag);
-
-        onItemPickedUp?.Invoke(_itemToDrag);
     }
 
     /*
@@ -108,18 +99,12 @@ public class InventoryController : MonoBehaviour,
 
         switch (mode)
         {
-            case InventoryDraggedItem.DropMode.Added:
-                onItemAdded?.Invoke(_itemToDrag);
-                break;
-            case InventoryDraggedItem.DropMode.Swapped:
-                onItemSwapped?.Invoke(_itemToDrag);
-                break;
-            case InventoryDraggedItem.DropMode.Returned:
-                onItemReturned?.Invoke(_itemToDrag);
-                break;
             case InventoryDraggedItem.DropMode.Dropped:
-                onItemDropped?.Invoke(_itemToDrag);
                 ClearHoveredItem();
+                break;
+            case InventoryDraggedItem.DropMode.Added:
+            case InventoryDraggedItem.DropMode.Swapped:
+            case InventoryDraggedItem.DropMode.Returned:
                 break;
             default:
                 throw new ArgumentOutOfRangeException();
@@ -172,7 +157,6 @@ public class InventoryController : MonoBehaviour,
             var grid = ScreenToGrid(_currentEventData.position);
             var item = inventory.GetAtPoint(grid);
             if (item == _lastHoveredItem) return;
-            onItemHovered?.Invoke(item);
             _lastHoveredItem = item;
         }
         else
@@ -187,8 +171,6 @@ public class InventoryController : MonoBehaviour,
      */
     void ClearHoveredItem()
     {
-        if (_lastHoveredItem != null)
-            onItemHovered?.Invoke(null);
         _lastHoveredItem = null;
     }
 

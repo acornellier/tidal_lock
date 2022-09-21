@@ -14,7 +14,7 @@ public class RecipePanel : MonoBehaviour
 
     [Inject] Player _player;
 
-    ItemObject _itemObject;
+    Item _item;
 
     void Awake()
     {
@@ -29,7 +29,7 @@ public class RecipePanel : MonoBehaviour
             return;
         }
 
-        foreach (var ingredient in _itemObject.ingredients)
+        foreach (var ingredient in _item.ingredients)
         {
             for (var i = 0; i < ingredient.quantity; ++i)
             {
@@ -40,12 +40,12 @@ public class RecipePanel : MonoBehaviour
             }
         }
 
-        _player.inventory.bag.TryAdd(_itemObject.CreateInstance());
+        _player.inventory.bag.TryAdd(_item.CreateInstance());
     }
 
     bool MissingIngredients()
     {
-        return _itemObject.ingredients.Any(
+        return _item.ingredients.Any(
             ingredient =>
             {
                 var amountInInventory =
@@ -55,11 +55,11 @@ public class RecipePanel : MonoBehaviour
         );
     }
 
-    public void SetRecipe(ItemObject itemObject)
+    public void SetRecipe(Item item)
     {
-        _itemObject = itemObject;
+        _item = item;
 
-        if (_itemObject == null)
+        if (_item == null)
             ClearContents();
         else
             InitializeContents();
@@ -78,16 +78,16 @@ public class RecipePanel : MonoBehaviour
 
     void InitializeContents()
     {
-        _title.text = _itemObject.name;
+        _title.text = _item.name;
         _icon.enabled = true;
-        _icon.sprite = _itemObject.sprite;
+        _icon.sprite = _item.sprite;
 
         foreach (Transform child in _ingredientList.transform)
         {
             Utilities.DestroyGameObject(child.gameObject);
         }
 
-        foreach (var ingredient in _itemObject.sortedIngredients)
+        foreach (var ingredient in _item.sortedIngredients)
         {
             var obj = Instantiate(_ingredientPrefab, _ingredientList.transform);
             obj.PostInstantiate(ingredient);

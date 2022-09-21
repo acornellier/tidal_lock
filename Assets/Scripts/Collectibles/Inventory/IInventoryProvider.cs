@@ -17,42 +17,42 @@ public interface IInventoryProvider
     /// <summary>
     /// Returns the inventory item at given index
     /// </summary>
-    ItemObject GetInventoryItem(int index);
+    IInventoryItem GetInventoryItem(int index);
 
     /// <summary>
     /// Returns true if given inventory item is allowed inside 
     /// this inventory
     /// </summary>
-    bool CanAddInventoryItem(ItemObject item);
+    bool CanAddInventoryItem(IInventoryItem item);
 
     /// <summary>
     /// Returns true if given inventory item is allowed to 
     /// be removed from this inventory
     /// </summary>
-    bool CanRemoveInventoryItem(ItemObject item);
+    bool CanRemoveInventoryItem(IInventoryItem item);
 
     /// <summary>
     /// Returns true if given inventory item is allowed to 
     /// be dropped on the ground
     /// </summary>
-    bool CanDropInventoryItem(ItemObject item);
+    bool CanDropInventoryItem(IInventoryItem item);
 
     /// <summary>
     /// Invoked when an inventory item is added to the 
     /// inventory. Returns true if successful.
     /// </summary>
-    bool AddInventoryItem(ItemObject item);
+    bool AddInventoryItem(IInventoryItem item);
 
     /// <summary>
     /// Invoked when an inventory item is removed to the 
     /// inventory. Returns true if successful.
     /// </summary>
-    bool RemoveInventoryItem(ItemObject item);
+    bool RemoveInventoryItem(IInventoryItem item);
 
     /// <summary>
     /// Invoked when an inventory item is removed from the 
     /// inventory and should be placed on the ground.
     /// Returns true if successful.
     /// </summary>
-    bool DropInventoryItem(ItemObject item);
+    bool DropInventoryItem(IInventoryItem item);
 }

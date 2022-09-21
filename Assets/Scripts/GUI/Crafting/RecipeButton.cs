@@ -6,16 +6,16 @@ public class RecipeButton : MonoBehaviour
 {
     [SerializeField] TMP_Text _text;
 
-    public event Action<ItemObject> OnSelect;
+    public event Action<Item> OnSelect;
 
-    ItemObject _item;
+    Item _item;
 
     void Awake()
     {
         _text.text = "";
     }
 
-    public void PostInstantiate(ItemObject item)
+    public void PostInstantiate(Item item)
     {
         _item = item;
         _text.text = item.name;
